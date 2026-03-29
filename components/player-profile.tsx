@@ -85,17 +85,15 @@ export function PlayerProfile({ player, open, onOpenChange }: PlayerProfileProps
         </div>
 
         {/* Avatar & Name */}
-        <div className="relative px-6 -mt-20">
+        <div className="relative px-6 -mt-16">
           <div className="flex items-end gap-5">
-            {/* Full body skin */}
+            {/* Player skin - using bust for better positioning */}
             <div className="relative">
-              <div className="w-24 h-40 rounded-xl overflow-hidden ring-4 ring-[#12141a] shadow-2xl bg-[#1a1d24] flex items-center justify-center">
-                <Image
-                  src={`https://mc-heads.net/body/${player?.nick || 'Steve'}/150`}
+              <div className="w-28 h-28 rounded-2xl overflow-hidden ring-4 ring-[#12141a] shadow-2xl bg-gradient-to-br from-[#1a1d24] to-[#12141a] flex items-center justify-center">
+                <img
+                  src={`https://mc-heads.net/avatar/${player?.nick || 'Steve'}/112`}
                   alt={player?.nick || 'player'}
-                  width={96}
-                  height={160}
-                  className="h-full w-auto object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
 
