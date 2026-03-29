@@ -66,16 +66,16 @@ export const usePlayersStore = create<PlayersState>((set) => ({
             ? data.tiers.map((t: any) => ({
                 mode: t?.mode || 'Overall',
                 tier: t?.tier || 'LT5',
-                points: t?.points || 0,
-                wins: t?.wins || 0,
-                losses: t?.losses || 0,
-                peakPoints: t?.peakPoints || 0,
+                points: Number(t?.points) || 0,
+                wins: Number(t?.wins) || 0,
+                losses: Number(t?.losses) || 0,
+                peakPoints: Number(t?.peakPoints) || 0,
               }))
             : [
                 {
                   mode: data.mode || 'Overall',
                   tier: data.tier || 'LT5',
-                  points: data.points || 0,
+                  points: Number(data.points) || 0,
                   wins: 0,
                   losses: 0,
                   peakPoints: 0,

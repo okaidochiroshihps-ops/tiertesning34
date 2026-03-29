@@ -55,7 +55,10 @@ export function RankingTable({
       })
       .sort((a, b) => {
         // Ordena por pontos (maior primeiro)
-        return (b.modeTier?.points || 0) - (a.modeTier?.points || 0)
+        const pointsA = Number(a.modeTier?.points) || 0
+        const pointsB = Number(b.modeTier?.points) || 0
+        console.log('[v0] Sorting:', a.player.nick, pointsA, 'vs', b.player.nick, pointsB)
+        return pointsB - pointsA
       })
       .map(({ player }) => player)
   }, [players, selectedMode, search, region, tier])
