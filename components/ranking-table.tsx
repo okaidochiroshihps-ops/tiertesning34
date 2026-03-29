@@ -57,15 +57,12 @@ export function RankingTable({
         return true
       })
       .sort((a, b) => {
-        // Ordena por pontos do modo selecionado (maior primeiro)
-        return b.modePoints - a.modePoints
+        // Ordena pelo campo order (menor = primeiro no ranking)
+        const orderA = a.player.order ?? 9999
+        const orderB = b.player.order ?? 9999
+        return orderA - orderB
       })
       .map(({ player }) => player)
-    
-    console.log('[v0] Ranking final:', result.map((p, i) => {
-      const t = p.tiers?.find(t => t.mode === selectedMode)
-      return `${i+1}. ${p.nick}: ${t?.points} pts (${t?.tier})`
-    }))
     
     return result
   }, [players, selectedMode, search, region, tier])

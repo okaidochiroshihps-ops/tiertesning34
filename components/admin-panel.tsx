@@ -47,7 +47,8 @@ import {
   UserPlus, Plus, X, Shield, Settings, Globe, 
   MessageSquare, Users, Trash2, Edit3, Save, RotateCcw,
   Server, Link, Bell, Lock, ExternalLink, Search,
-  Wrench, Clock, FileText, Image, AlertTriangle
+  Wrench, Clock, FileText, Image, AlertTriangle,
+  ChevronUp, ChevronDown
 } from 'lucide-react'
 
 interface TierEntry {
@@ -59,7 +60,7 @@ interface TierEntry {
 }
 
 export function AdminPanel() {
-  const { isAdmin, players, addPlayer, removePlayer, updatePlayer } = usePlayersStore()
+  const { isAdmin, players, addPlayer, removePlayer, updatePlayer, movePlayer } = usePlayersStore()
   const { settings, updateSettings, resetSettings } = useSiteSettings()
   
   const [open, setOpen] = useState(false)
@@ -88,9 +89,9 @@ export function AdminPanel() {
     setLocalSettings(settings)
   }, [settings])
 
-  const filteredPlayers = players.filter(p => 
-    p.nick.toLowerCase().includes(searchPlayer.toLowerCase())
-  )
+  const filteredPlayers = players
+    .filter(p => p.nick.toLowerCase().includes(searchPlayer.toLowerCase()))
+    .sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999))
 
   const addTierEntry = () => {
     const availableModes = GAME_MODES.filter(
@@ -488,7 +489,7 @@ export function AdminPanel() {
                     Nenhum jogador encontrado
                   </p>
                 ) : (
-                  filteredPlayers.map((player) => (
+                  filteredPlayers.map((player, index) => (
                     <div
                       key={player.id}
                       className={cn(
@@ -498,6 +499,10 @@ export function AdminPanel() {
                         editingPlayer?.id === player.id && 'ring-2 ring-primary'
                       )}
                     >
+                      {/* Posicao no ranking */}
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mr-3 flex-shrink-0">
+                        <span className="text-sm font-bold text-primary">#{index + 1}</span>
+                      </div>
                       {editingPlayer?.id === player.id ? (
                         <div className="flex-1 space-y-3">
                           <div className="grid grid-cols-2 gap-2">
@@ -643,6 +648,27 @@ export function AdminPanel() {
                             </div>
                           </div>
                           <div className="flex gap-1 flex-shrink-0">
+                            {/* Botoes de mover */}
+                            <div className="flex flex-col gap-0.5 mr-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => movePlayer(player.id, 'up', 'Overall')}
+                                className="h-5 w-8 hover:bg-emerald-500/20 hover:text-emerald-400"
+                                title="Subir posicao"
+                              >
+                                <ChevronUp className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => movePlayer(player.id, 'down', 'Overall')}
+                                className="h-5 w-8 hover:bg-orange-500/20 hover:text-orange-400"
+                                title="Descer posicao"
+                              >
+                                <ChevronDown className="h-4 w-4" />
+                              </Button>
+                            </div>
                             <Button
                               variant="ghost"
                               size="icon"
