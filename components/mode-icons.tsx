@@ -11,7 +11,7 @@ interface ModeIconProps {
 
 const MODE_ICONS: Record<GameMode, string> = {
   Overall: '/icons/overall.svg',
-  LTMs: '/icons/ltms.svg',
+  LTMs: '/icons/2v2.svg',
   Vanilla: '/icons/vanilla.svg',
   UHC: '/icons/uhc.svg',
   Pot: '/icons/pot.svg',
@@ -20,7 +20,7 @@ const MODE_ICONS: Record<GameMode, string> = {
   Sword: '/icons/sword.svg',
   Axe: '/icons/axe.svg',
   Mace: '/icons/mace.svg',
-  Crystal: '/icons/uhc.svg',
+  Crystal: '/icons/pot.svg',
 }
 
 export function ModeIcon({ mode, className = '', size = 24 }: ModeIconProps) {
@@ -40,16 +40,16 @@ export function ModeIcon({ mode, className = '', size = 24 }: ModeIconProps) {
 export function getModeColor(mode: GameMode): string {
   const colors: Record<GameMode, string> = {
     Overall: '#FFD700',
-    LTMs: '#A855F7',
-    Vanilla: '#6B7280',
-    UHC: '#EF4444',
-    Pot: '#A855F7',
-    NethOP: '#7C3AED',
-    SMP: '#10B981',
-    Sword: '#3B82F6',
-    Axe: '#F59E0B',
-    Mace: '#6B7280',
-    Crystal: '#EC4899',
+    LTMs: '#CCCCCC',
+    Vanilla: '#6195D9',
+    UHC: '#D44E50',
+    Pot: '#D65474',
+    NethOP: '#8083BF',
+    SMP: '#10574B',
+    Sword: '#71BFDD',
+    Axe: '#6195D9',
+    Mace: '#60606B',
+    Crystal: '#C889E6',
   }
   return colors[mode] || '#6B7280'
 }
