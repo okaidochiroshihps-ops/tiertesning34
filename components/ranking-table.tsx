@@ -7,6 +7,19 @@ import { usePlayersStore } from '@/lib/store'
 import type { GameMode, Region, TierType } from '@/lib/types'
 import { Users, Trophy, Medal, Award } from 'lucide-react'
 
+// Ordem dos tiers para desempate (menor = melhor)
+// HT1 e o melhor, LT5 e o pior
+const TIER_RANK: Record<TierType, number> = {
+  'HT1': 1, 'HT2': 2, 'HT3': 3, 'HT4': 4, 'HT5': 5,
+  'MT1': 6, 'MT2': 7, 'MT3': 8, 'MT4': 9, 'MT5': 10,
+  'LT1': 11, 'LT2': 12, 'LT3': 13, 'LT4': 14, 'LT5': 15,
+}
+
+function getTierRank(tier: TierType | undefined): number {
+  if (!tier) return 999
+  return TIER_RANK[tier] ?? 999
+}
+
 interface RankingTableProps {
   selectedMode: GameMode
   search: string
@@ -57,10 +70,14 @@ export function RankingTable({
         return true
       })
       .sort((a, b) => {
-        // Ordena pelo campo order (menor = primeiro no ranking)
-        const orderA = a.player.order ?? 9999
-        const orderB = b.player.order ?? 9999
-        return orderA - orderB
+        // 1. Ordena por pontos do modo selecionado (maior = melhor)
+        const pointsDiff = b.modePoints - a.modePoints
+        if (pointsDiff !== 0) return pointsDiff
+        
+        // 2. Se pontos iguais, desempata pelo tier (HT > MT > LT, numero menor = melhor)
+        const tierRankA = getTierRank(a.modeTier?.tier)
+        const tierRankB = getTierRank(b.modeTier?.tier)
+        return tierRankA - tierRankB
       })
       .map(({ player }) => player)
     
