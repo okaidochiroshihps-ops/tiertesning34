@@ -7,6 +7,20 @@ import { usePlayersStore } from '@/lib/store'
 import type { GameMode, Region, TierType } from '@/lib/types'
 import { Users, Trophy, Medal, Award } from 'lucide-react'
 
+// Ordem dos tiers do melhor para o pior
+const TIER_ORDER: TierType[] = [
+  'HT1', 'HT2', 'HT3', 'HT4', 'HT5',
+  'MT1', 'MT2', 'MT3', 'MT4', 'MT5',
+  'LT1', 'LT2', 'LT3', 'LT4', 'LT5',
+]
+
+// Funcao para obter a posicao do tier na ordem (menor = melhor)
+function getTierRank(tier: TierType | undefined): number {
+  if (!tier) return 999 // Sem tier = ultimo
+  const index = TIER_ORDER.indexOf(tier)
+  return index === -1 ? 999 : index
+}
+
 interface RankingTableProps {
   selectedMode: GameMode
   search: string
@@ -53,11 +67,18 @@ export function RankingTable({
 
         return true
       })
-      .sort(
-        (a, b) =>
-          (b.modeTier?.points || 0) -
-          (a.modeTier?.points || 0)
-      )
+      .sort((a, b) => {
+        // Primeiro ordena pelo tier (HT1 > HT2 > ... > LT5)
+        const tierRankA = getTierRank(a.modeTier?.tier)
+        const tierRankB = getTierRank(b.modeTier?.tier)
+        
+        if (tierRankA !== tierRankB) {
+          return tierRankA - tierRankB // Menor rank = melhor tier
+        }
+        
+        // Se o tier for igual, ordena por pontos (maior primeiro)
+        return (b.modeTier?.points || 0) - (a.modeTier?.points || 0)
+      })
       .map(({ player }) => player)
   }, [players, selectedMode, search, region, tier])
 

@@ -197,15 +197,12 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
                       !hasTier && 'opacity-20 grayscale'
                     )}
                   />
-                  {hasTier ? (
-                    <TierBadge 
-                      tier={tier.tier} 
-                      size="xs" 
-                      className="text-[10px] px-1.5 py-0.5 min-w-[32px] justify-center font-bold"
-                    />
-                  ) : (
-                    <span className="text-[10px] text-muted-foreground/20 font-bold">-</span>
-                  )}
+                  <TierBadge 
+                    tier={hasTier ? tier.tier : undefined} 
+                    size="xs" 
+                    className="text-[10px] px-1.5 py-0.5 min-w-[32px] justify-center font-bold"
+                    showEmpty={!hasTier}
+                  />
                 </div>
               )
             })}
@@ -233,15 +230,12 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
                     size={22} 
                     className={cn(!hasTier && 'opacity-20 grayscale')}
                   />
-                  {hasTier ? (
-                    <TierBadge 
-                      tier={tier.tier} 
-                      size="xs" 
-                      className="text-[9px] px-1 py-0 min-w-[26px] justify-center"
-                    />
-                  ) : (
-                    <span className="text-[9px] text-muted-foreground/20 font-medium">-</span>
-                  )}
+                  <TierBadge 
+                    tier={hasTier ? tier.tier : undefined} 
+                    size="xs" 
+                    className="text-[9px] px-1 py-0 min-w-[26px] justify-center"
+                    showEmpty={!hasTier}
+                  />
                 </div>
               )
             })}
@@ -359,15 +353,12 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
                     size={20} 
                     className={cn(!hasTier && 'opacity-20 grayscale')}
                   />
-                  {hasTier ? (
-                    <TierBadge 
-                      tier={tier.tier} 
-                      size="xs" 
-                      className="text-[8px] px-1 py-0 min-w-[24px] justify-center"
-                    />
-                  ) : (
-                    <span className="text-[8px] text-muted-foreground/20 font-medium">-</span>
-                  )}
+                  <TierBadge 
+                    tier={hasTier ? tier.tier : undefined} 
+                    size="xs" 
+                    className="text-[8px] px-1 py-0 min-w-[24px] justify-center"
+                    showEmpty={!hasTier}
+                  />
                 </div>
               )
             })}
