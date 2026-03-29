@@ -259,21 +259,100 @@ export default function Home() {
 
       {/* Snowfall effect for Christmas/New Year */}
       {eventStyles.snowfall && (
-        <div className="fixed inset-0 pointer-events-none overflow-hidden z-50">
-          {[...Array(30)].map((_, i) => (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-40">
+          {[...Array(40)].map((_, i) => {
+            const size = 8 + Math.random() * 14
+            const left = Math.random() * 100
+            const delay = Math.random() * 8
+            const duration = 8 + Math.random() * 6
+            const symbol = settings.seasonalEvent === 'christmas' ? '❄' : '✨'
+            
+            return (
+              <div
+                key={i}
+                className="absolute animate-fall"
+                style={{
+                  left: `${left}%`,
+                  top: '-20px',
+                  animationDelay: `${delay}s`,
+                  animationDuration: `${duration}s`,
+                  fontSize: `${size}px`,
+                  opacity: 0.4 + Math.random() * 0.4,
+                  color: settings.seasonalEvent === 'christmas' ? '#a5d6ff' : '#ffd700'
+                }}
+              >
+                {symbol}
+              </div>
+            )
+          })}
+        </div>
+      )}
+      
+      {/* Valentine's hearts effect */}
+      {settings.seasonalEvent === 'valentines' && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-40">
+          {[...Array(15)].map((_, i) => (
             <div
               key={i}
-              className="absolute animate-fall text-white/30"
+              className="absolute animate-float"
               style={{
                 left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 5}s`,
-                animationDuration: `${5 + Math.random() * 5}s`,
-                fontSize: `${8 + Math.random() * 12}px`
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                fontSize: `${12 + Math.random() * 16}px`,
+                opacity: 0.15 + Math.random() * 0.15
               }}
             >
-              {settings.seasonalEvent === 'christmas' ? '❄' : '✨'}
+              💕
             </div>
           ))}
+        </div>
+      )}
+      
+      {/* Halloween bats effect */}
+      {settings.seasonalEvent === 'halloween' && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-40">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-float"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${10 + Math.random() * 30}%`,
+                animationDelay: `${Math.random() * 4}s`,
+                animationDuration: `${4 + Math.random() * 3}s`,
+                fontSize: `${18 + Math.random() * 14}px`,
+                opacity: 0.2 + Math.random() * 0.2
+              }}
+            >
+              🦇
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Easter eggs effect */}
+      {settings.seasonalEvent === 'easter' && (
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-40">
+          {[...Array(12)].map((_, i) => {
+            const emojis = ['🥚', '🐰', '🌸', '🐣']
+            return (
+              <div
+                key={i}
+                className="absolute animate-float"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationDuration: `${4 + Math.random() * 4}s`,
+                  fontSize: `${14 + Math.random() * 12}px`,
+                  opacity: 0.15 + Math.random() * 0.2
+                }}
+              >
+                {emojis[Math.floor(Math.random() * emojis.length)]}
+              </div>
+            )
+          })}
         </div>
       )}
 

@@ -265,8 +265,14 @@ export function AdminPanel() {
             Painel de Administrador
           </SheetTitle>
           <SheetDescription>
-            Gerencie jogadores, configuracoes do site e muito mais. Todas as configuracoes sao GLOBAIS.
+            Gerencie jogadores, configuracoes do site e muito mais.
           </SheetDescription>
+          {/* Firebase Status Indicator */}
+          <div className="flex items-center gap-2 mt-3 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-xs text-emerald-400 font-medium">Firebase Conectado</span>
+            <span className="text-xs text-muted-foreground">- Todas as alteracoes sao salvas globalmente em tempo real</span>
+          </div>
         </SheetHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
@@ -604,28 +610,39 @@ export function AdminPanel() {
                         </div>
                       ) : (
                         <>
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={`https://mc-heads.net/body/${player.nick}/40`}
-                              alt={player.nick}
-                              className="w-auto h-10 rounded object-contain"
-                            />
-                            <div>
-                              <p className="text-sm font-medium">{player.nick}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {REGION_FLAGS[player.region]} {player.region}
-                              </p>
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {/* Player Avatar */}
+                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a2d35] to-[#1f2227] border border-[#3a3d45]/50 flex-shrink-0">
+                              <img
+                                src={`https://mc-heads.net/avatar/${player.nick}/48`}
+                                alt={player.nick}
+                                className="w-full h-full object-cover"
+                              />
                             </div>
-                            <div className="flex gap-1 ml-2">
-                              {player.tiers.slice(0, 3).map((t) => (
-                                <TierBadge key={t.mode} tier={t.tier} size="xs" />
-                              ))}
-                              {player.tiers.length > 3 && (
-                                <span className="text-[10px] text-muted-foreground">+{player.tiers.length - 3}</span>
-                              )}
+                            {/* Player Info */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-sm font-bold text-foreground truncate">{player.nick}</p>
+                                <span className="text-xs px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-medium">
+                                  {REGION_FLAGS[player.region]} {player.region}
+                                </span>
+                              </div>
+                              {/* Tiers row */}
+                              <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                {player.tiers.map((t) => (
+                                  <div 
+                                    key={t.mode} 
+                                    className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-secondary/50"
+                                    title={`${t.mode}: ${t.tier}`}
+                                  >
+                                    <ModeIcon mode={t.mode} size={12} />
+                                    <TierBadge tier={t.tier} size="xs" className="text-[9px] px-1 py-0" />
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                          <div className="flex gap-1">
+                          <div className="flex gap-1 flex-shrink-0">
                             <Button
                               variant="ghost"
                               size="icon"

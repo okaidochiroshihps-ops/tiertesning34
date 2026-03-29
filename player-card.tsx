@@ -82,99 +82,123 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
   // Modes to display (first 8)
   const displayModes = GAME_MODES.slice(0, 8)
 
+  // Get rank glow effect
+  const getRankGlow = (r: number) => {
+    if (!showTop3Colors) return ''
+    switch (r) {
+      case 1: return 'shadow-[0_0_20px_rgba(251,191,36,0.3)]'
+      case 2: return 'shadow-[0_0_15px_rgba(148,163,184,0.25)]'
+      case 3: return 'shadow-[0_0_15px_rgba(251,146,60,0.25)]'
+      default: return ''
+    }
+  }
+
   return (
     <>
       <div 
         onClick={() => setProfileOpen(true)}
         className={cn(
           'group relative cursor-pointer',
-          'bg-[#1a1d24] hover:bg-[#1f2329]',
-          'border-b border-[#2a2d35] last:border-b-0',
-          'transition-all duration-200'
+          'bg-gradient-to-r from-[#1a1d24] to-[#1e2128]',
+          'hover:from-[#1f2329] hover:to-[#252a32]',
+          'border-b border-[#2a2d35]/50 last:border-b-0',
+          'transition-all duration-300',
+          showTop3Colors && rank <= 3 && 'hover:scale-[1.01]',
+          getRankGlow(rank)
         )}
       >
-        <div className="flex items-center py-2 gap-0">
-          {/* Rank Number with colored background for top 3 - MCTiers style */}
+        <div className="flex items-center py-3 px-2 gap-3">
+          {/* Rank Number with colored background for top 3 */}
           {showRankNumbers && (
             <div className={cn(
-              'w-16 h-16 flex items-center justify-center flex-shrink-0 rounded-lg mr-2 ml-2',
-              showTop3Colors ? getRankBackground(rank) : 'bg-[#2a2d35]'
+              'w-14 h-14 flex items-center justify-center flex-shrink-0 rounded-xl',
+              'transition-all duration-300',
+              showTop3Colors ? getRankBackground(rank) : 'bg-[#2a2d35]/80'
             )}>
               <span className={cn(
-                'text-2xl font-bold italic',
-                showTop3Colors && rank <= 3 ? 'text-white' : 'text-muted-foreground/80'
+                'text-xl font-black',
+                showTop3Colors && rank <= 3 ? 'text-white drop-shadow-lg' : 'text-muted-foreground/80'
               )}>
-                {rank}.
+                #{rank}
               </span>
             </div>
           )}
 
-          {/* Player Skin - Bust/Upper body like MCTiers */}
-          <div className="w-12 h-14 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-lg bg-[#2a2d35]/50">
+          {/* Player Avatar - Face with nice border */}
+          <div className={cn(
+            'w-14 h-14 flex-shrink-0 rounded-xl overflow-hidden',
+            'bg-gradient-to-br from-[#2a2d35] to-[#1f2227]',
+            'border-2 transition-all duration-300',
+            showTop3Colors && rank === 1 && 'border-amber-500/50',
+            showTop3Colors && rank === 2 && 'border-slate-400/50',
+            showTop3Colors && rank === 3 && 'border-orange-500/50',
+            (!showTop3Colors || rank > 3) && 'border-[#3a3d45]/50',
+            'group-hover:border-primary/50'
+          )}>
             <img
-              src={`https://mc-heads.net/bust/${player.nick}/64`}
+              src={`https://mc-heads.net/avatar/${player.nick}/56`}
               alt={player.nick}
-              className="h-full w-auto object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
 
           {/* Player Info */}
-          <div className="flex-1 min-w-0 px-3">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-foreground truncate">
+              <span className="text-lg font-bold text-foreground truncate group-hover:text-primary transition-colors">
                 {player.nick}
               </span>
+              {/* Main tier badge next to name */}
+              <TierBadge 
+                tier={currentTier.tier} 
+                size="sm" 
+                className="opacity-90"
+              />
             </div>
             {showPlayerTitle && (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
-                <span className={titleColor}>&#9670;</span>
-                <span className={titleColor}>{playerTitle}</span>
-                <span className="text-muted-foreground/50">({formatNumber(totalPoints)} points)</span>
+              <div className="flex items-center gap-1.5 text-sm mt-0.5">
+                <span className={cn(titleColor, 'text-xs')}>&#9670;</span>
+                <span className={cn(titleColor, 'font-medium')}>{playerTitle}</span>
+                <span className="text-muted-foreground/50 text-xs">({formatNumber(totalPoints)} pts)</span>
               </div>
             )}
           </div>
 
           {/* Region Badge */}
           {showRegion && (
-            <div className="flex-shrink-0 mr-4">
+            <div className="flex-shrink-0">
               <RegionBadge region={player.region} />
             </div>
           )}
 
-          {/* Mode Tier Icons - MCTiers style: only show tiers player has, empty for others */}
-          <div className="flex items-center gap-2 flex-shrink-0 mr-4">
-            {displayModes.map((mode) => {
+          {/* Mode Tier Icons - Compact grid */}
+          <div className="hidden md:flex items-center gap-1.5 flex-shrink-0">
+            {displayModes.slice(0, 6).map((mode) => {
               const tier = safeTiers.find((t) => t.mode === mode)
               const hasTier = !!tier
               
               return (
                 <div 
                   key={mode} 
-                  className="flex flex-col items-center gap-1"
+                  className={cn(
+                    'flex flex-col items-center gap-0.5 p-1.5 rounded-lg transition-all duration-200',
+                    hasTier ? 'bg-[#2a2d35]/80 hover:bg-[#3a3d45]' : 'bg-[#2a2d35]/30'
+                  )}
                   title={`${mode}: ${tier?.tier || 'Sem tier'}`}
                 >
-                  {/* Mode Icon in circle */}
-                  <div className={cn(
-                    'w-9 h-9 rounded-full flex items-center justify-center',
-                    hasTier ? 'bg-[#2a2d35]' : 'bg-[#2a2d35]/40'
-                  )}>
-                    <ModeIcon 
-                      mode={mode} 
-                      size={22} 
-                      className={cn(!hasTier && 'opacity-40')}
-                    />
-                  </div>
-                  {/* Tier Badge - show actual tier or "-" */}
+                  <ModeIcon 
+                    mode={mode} 
+                    size={18} 
+                    className={cn(!hasTier && 'opacity-30')}
+                  />
                   {hasTier ? (
                     <TierBadge 
                       tier={tier.tier} 
                       size="xs" 
-                      className="text-[10px] px-1.5 py-0.5 min-w-[32px] justify-center"
+                      className="text-[9px] px-1 py-0 min-w-[26px] justify-center"
                     />
                   ) : (
-                    <span className="text-[10px] text-muted-foreground/50 font-medium">
-                      -
-                    </span>
+                    <span className="text-[9px] text-muted-foreground/30 font-medium">-</span>
                   )}
                 </div>
               )
@@ -186,7 +210,7 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0 mr-2"
+              className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
               onClick={(e) => {
                 e.stopPropagation()
                 removePlayer(player.id)
