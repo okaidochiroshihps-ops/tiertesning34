@@ -216,4 +216,5 @@ export interface Player {
   totalMatches?: number
   joinedAt?: Date
   lastSeen?: Date
+  order?: number // Ordem manual do jogador no ranking (menor = mais alto)
 }

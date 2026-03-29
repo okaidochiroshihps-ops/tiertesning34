@@ -7,6 +7,20 @@ import { usePlayersStore } from '@/lib/store'
 import type { GameMode, Region, TierType } from '@/lib/types'
 import { Users, Trophy, Medal, Award } from 'lucide-react'
 
+// Ordem dos tiers para desempate (menor numero = tier mais forte)
+// HT1 e o mais forte (1), LT5 e o mais fraco (15)
+// Ordem de forca: LT5 < LT4 < LT3 < LT2 < LT1 < HT5 < HT4 < HT3 < HT2 < HT1
+const TIER_RANK: Record<TierType, number> = {
+  'HT1': 1, 'HT2': 2, 'HT3': 3, 'HT4': 4, 'HT5': 5,
+  'LT1': 6, 'LT2': 7, 'LT3': 8, 'LT4': 9, 'LT5': 10,
+  'MT1': 11, 'MT2': 12, 'MT3': 13, 'MT4': 14, 'MT5': 15,
+}
+
+function getTierRank(tier: TierType | undefined): number {
+  if (!tier) return 999
+  return TIER_RANK[tier] ?? 999
+}
+
 interface RankingTableProps {
   selectedMode: GameMode
   search: string
@@ -23,13 +37,18 @@ export function RankingTable({
   const { players } = usePlayersStore()
 
   const filteredAndSortedPlayers = useMemo(() => {
-    return players
+    const result = players
       .map((player) => {
-        const modeTier = player.tiers?.find(
-          (t) => t.mode === selectedMode
-        )
+        const safeTiers = Array.isArray(player.tiers) ? player.tiers : []
+        const modeTier = safeTiers.find((t) => t.mode === selectedMode)
+        // Calcula pontos totais de todos os modos
+        const totalPoints = safeTiers.reduce((acc, t) => acc + (Number(t?.points) || 0), 0)
+        // Pontos do modo selecionado
+        const modePoints = Number(modeTier?.points) || 0
+        
+        console.log('[v0] Player:', player.nick, 'totalPoints:', totalPoints, 'tiers:', safeTiers.map(t => `${t.mode}:${t.points}`))
 
-        return { player, modeTier }
+        return { player, modeTier, totalPoints, modePoints }
       })
       .filter(({ player, modeTier }) => {
         if (!modeTier) return false
@@ -53,12 +72,20 @@ export function RankingTable({
 
         return true
       })
-      .sort(
-        (a, b) =>
-          (b.modeTier?.points || 0) -
-          (a.modeTier?.points || 0)
-      )
+      .sort((a, b) => {
+        // 1. Ordena por PONTOS TOTAIS (maior = melhor posicao no ranking)
+        const pointsDiff = b.totalPoints - a.totalPoints
+        if (pointsDiff !== 0) return pointsDiff
+        
+        // 2. Se pontos iguais, desempata pelo tier mais forte
+        // HT1 > HT2 > ... > HT5 > LT1 > LT2 > ... > LT5
+        const tierRankA = getTierRank(a.modeTier?.tier)
+        const tierRankB = getTierRank(b.modeTier?.tier)
+        return tierRankA - tierRankB
+      })
       .map(({ player }) => player)
+    
+    return result
   }, [players, selectedMode, search, region, tier])
 
   if (filteredAndSortedPlayers.length === 0) {
