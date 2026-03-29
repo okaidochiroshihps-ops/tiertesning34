@@ -107,7 +107,8 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
           getRankGlow(rank)
         )}
       >
-        <div className="flex items-center py-3 px-2 gap-3">
+        {/* Desktop Layout */}
+        <div className="hidden sm:flex items-center py-3 px-2 gap-3">
           {/* Rank Number with colored background for top 3 */}
           {showRankNumbers && (
             <div className={cn(
@@ -171,7 +172,7 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
             </div>
           )}
 
-          {/* Mode Tier Icons - All modes visible */}
+          {/* Mode Tier Icons - All modes visible on large screens */}
           <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
             {GAME_MODES.filter(m => m !== 'Overall').map((mode) => {
               const tier = safeTiers.find((t) => t.mode === mode)
@@ -210,7 +211,7 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
             })}
           </div>
           
-          {/* Mobile: Show fewer modes */}
+          {/* Tablet: Show fewer modes */}
           <div className="hidden md:flex lg:hidden items-center gap-1 flex-shrink-0">
             {GAME_MODES.filter(m => m !== 'Overall').slice(0, 5).map((mode) => {
               const tier = safeTiers.find((t) => t.mode === mode)
@@ -260,6 +261,117 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
               <Trash2 size={14} />
             </Button>
           )}
+        </div>
+        
+        {/* Mobile Layout */}
+        <div className="flex sm:hidden flex-col p-3 gap-3">
+          {/* Top row: Rank, Avatar, Name, Tier */}
+          <div className="flex items-center gap-3">
+            {/* Rank */}
+            {showRankNumbers && (
+              <div className={cn(
+                'w-10 h-10 flex items-center justify-center flex-shrink-0 rounded-lg',
+                showTop3Colors ? getRankBackground(rank) : 'bg-[#2a2d35]/80'
+              )}>
+                <span className={cn(
+                  'text-base font-black',
+                  showTop3Colors && rank <= 3 ? 'text-white' : 'text-muted-foreground/80'
+                )}>
+                  #{rank}
+                </span>
+              </div>
+            )}
+            
+            {/* Avatar */}
+            <div className={cn(
+              'w-10 h-10 flex-shrink-0 rounded-lg overflow-hidden',
+              'bg-gradient-to-br from-[#2a2d35] to-[#1f2227]',
+              'border-2',
+              showTop3Colors && rank === 1 && 'border-amber-500/50',
+              showTop3Colors && rank === 2 && 'border-slate-400/50',
+              showTop3Colors && rank === 3 && 'border-orange-500/50',
+              (!showTop3Colors || rank > 3) && 'border-[#3a3d45]/50'
+            )}>
+              <img
+                src={`https://mc-heads.net/avatar/${player.nick}/40`}
+                alt={player.nick}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Name and info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-base font-bold text-foreground truncate">
+                  {player.nick}
+                </span>
+                <TierBadge tier={currentTier.tier} size="xs" />
+              </div>
+              {showPlayerTitle && (
+                <div className="flex items-center gap-1 text-xs mt-0.5">
+                  <span className={titleColor}>{playerTitle}</span>
+                  <span className="text-muted-foreground/50">({formatNumber(totalPoints)} pts)</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Region on mobile */}
+            {showRegion && (
+              <span className="px-2 py-1 rounded text-xs font-bold bg-emerald-500/90 text-white flex-shrink-0">
+                {player.region}
+              </span>
+            )}
+            
+            {/* Admin delete mobile */}
+            {isAdmin && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground hover:text-destructive flex-shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  removePlayer(player.id)
+                }}
+              >
+                <Trash2 size={14} />
+              </Button>
+            )}
+          </div>
+          
+          {/* Bottom row: Mode icons grid */}
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 -mx-1 px-1">
+            {GAME_MODES.filter(m => m !== 'Overall').map((mode) => {
+              const tier = safeTiers.find((t) => t.mode === mode)
+              const hasTier = !!tier
+              
+              return (
+                <div 
+                  key={mode} 
+                  className={cn(
+                    'flex flex-col items-center gap-0.5 p-1.5 rounded-lg flex-shrink-0',
+                    hasTier 
+                      ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b]' 
+                      : 'bg-[#1a1d22]/40'
+                  )}
+                >
+                  <ModeIcon 
+                    mode={mode} 
+                    size={20} 
+                    className={cn(!hasTier && 'opacity-20 grayscale')}
+                  />
+                  {hasTier ? (
+                    <TierBadge 
+                      tier={tier.tier} 
+                      size="xs" 
+                      className="text-[8px] px-1 py-0 min-w-[24px] justify-center"
+                    />
+                  ) : (
+                    <span className="text-[8px] text-muted-foreground/20 font-medium">-</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
 
