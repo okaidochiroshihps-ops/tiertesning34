@@ -171,9 +171,48 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
             </div>
           )}
 
-          {/* Mode Tier Icons - Compact grid */}
-          <div className="hidden md:flex items-center gap-1.5 flex-shrink-0">
-            {displayModes.slice(0, 6).map((mode) => {
+          {/* Mode Tier Icons - All modes visible */}
+          <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
+            {GAME_MODES.filter(m => m !== 'Overall').map((mode) => {
+              const tier = safeTiers.find((t) => t.mode === mode)
+              const hasTier = !!tier
+              
+              return (
+                <div 
+                  key={mode} 
+                  className={cn(
+                    'flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200',
+                    hasTier 
+                      ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b] hover:from-[#32363f] hover:to-[#2a2d35] shadow-sm' 
+                      : 'bg-[#1a1d22]/50'
+                  )}
+                  title={`${mode}: ${tier?.tier || 'Sem tier'}`}
+                >
+                  <ModeIcon 
+                    mode={mode} 
+                    size={28} 
+                    className={cn(
+                      'transition-all duration-200',
+                      !hasTier && 'opacity-20 grayscale'
+                    )}
+                  />
+                  {hasTier ? (
+                    <TierBadge 
+                      tier={tier.tier} 
+                      size="xs" 
+                      className="text-[10px] px-1.5 py-0.5 min-w-[32px] justify-center font-bold"
+                    />
+                  ) : (
+                    <span className="text-[10px] text-muted-foreground/20 font-bold">-</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+          
+          {/* Mobile: Show fewer modes */}
+          <div className="hidden md:flex lg:hidden items-center gap-1 flex-shrink-0">
+            {GAME_MODES.filter(m => m !== 'Overall').slice(0, 5).map((mode) => {
               const tier = safeTiers.find((t) => t.mode === mode)
               const hasTier = !!tier
               
@@ -182,14 +221,16 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
                   key={mode} 
                   className={cn(
                     'flex flex-col items-center gap-0.5 p-1.5 rounded-lg transition-all duration-200',
-                    hasTier ? 'bg-[#2a2d35]/80 hover:bg-[#3a3d45]' : 'bg-[#2a2d35]/30'
+                    hasTier 
+                      ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b]' 
+                      : 'bg-[#1a1d22]/40'
                   )}
                   title={`${mode}: ${tier?.tier || 'Sem tier'}`}
                 >
                   <ModeIcon 
                     mode={mode} 
-                    size={18} 
-                    className={cn(!hasTier && 'opacity-30')}
+                    size={22} 
+                    className={cn(!hasTier && 'opacity-20 grayscale')}
                   />
                   {hasTier ? (
                     <TierBadge 
@@ -198,7 +239,7 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
                       className="text-[9px] px-1 py-0 min-w-[26px] justify-center"
                     />
                   ) : (
-                    <span className="text-[9px] text-muted-foreground/30 font-medium">-</span>
+                    <span className="text-[9px] text-muted-foreground/20 font-medium">-</span>
                   )}
                 </div>
               )
