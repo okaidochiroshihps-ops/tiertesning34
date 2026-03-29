@@ -173,72 +173,90 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
           )}
 
           {/* Mode Tier Icons - All modes visible on large screens */}
+          {/* Ordenados: primeiro os que tem tier, depois os que nao tem */}
           <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
-            {GAME_MODES.filter(m => m !== 'Overall').map((mode) => {
-              const tier = safeTiers.find((t) => t.mode === mode)
-              const hasTier = !!tier
-              
-              return (
-                <div 
-                  key={mode} 
-                  className={cn(
-                    'flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200',
-                    hasTier 
-                      ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b] hover:from-[#32363f] hover:to-[#2a2d35] shadow-sm' 
-                      : 'bg-[#1a1d22]/50'
-                  )}
-                  title={`${mode}: ${tier?.tier || 'Sem tier'}`}
-                >
-                  <ModeIcon 
-                    mode={mode} 
-                    size={28} 
+            {GAME_MODES.filter(m => m !== 'Overall')
+              .sort((a, b) => {
+                const hasTierA = safeTiers.some(t => t.mode === a)
+                const hasTierB = safeTiers.some(t => t.mode === b)
+                if (hasTierA && !hasTierB) return -1
+                if (!hasTierA && hasTierB) return 1
+                return 0
+              })
+              .map((mode) => {
+                const tier = safeTiers.find((t) => t.mode === mode)
+                const hasTier = !!tier
+                
+                return (
+                  <div 
+                    key={mode} 
                     className={cn(
-                      'transition-all duration-200',
-                      !hasTier && 'opacity-20 grayscale'
+                      'flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200',
+                      hasTier 
+                        ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b] hover:from-[#32363f] hover:to-[#2a2d35] shadow-sm' 
+                        : 'bg-[#1a1d22]/50'
                     )}
-                  />
-                  <TierBadge 
-                    tier={hasTier ? tier.tier : undefined} 
-                    size="xs" 
-                    className="text-[10px] px-1.5 py-0.5 min-w-[32px] justify-center font-bold"
-                    showEmpty={!hasTier}
-                  />
-                </div>
-              )
-            })}
+                    title={`${mode}: ${tier?.tier || 'Sem tier'}`}
+                  >
+                    <ModeIcon 
+                      mode={mode} 
+                      size={28} 
+                      className={cn(
+                        'transition-all duration-200',
+                        !hasTier && 'opacity-20 grayscale'
+                      )}
+                    />
+                    <TierBadge 
+                      tier={hasTier ? tier.tier : undefined} 
+                      size="xs" 
+                      className="text-[10px] px-1.5 py-0.5 min-w-[32px] justify-center font-bold"
+                      showEmpty={!hasTier}
+                    />
+                  </div>
+                )
+              })}
           </div>
           
-          {/* Tablet: Show fewer modes */}
+          {/* Tablet: Show fewer modes - ordenados por quem tem tier primeiro */}
           <div className="hidden md:flex lg:hidden items-center gap-1 flex-shrink-0">
-            {GAME_MODES.filter(m => m !== 'Overall').slice(0, 5).map((mode) => {
-              const tier = safeTiers.find((t) => t.mode === mode)
-              const hasTier = !!tier
-              
-              return (
-                <div 
-                  key={mode} 
-                  className={cn(
-                    'flex flex-col items-center gap-0.5 p-1.5 rounded-lg transition-all duration-200',
-                    hasTier 
-                      ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b]' 
-                      : 'bg-[#1a1d22]/40'
-                  )}
-                  title={`${mode}: ${tier?.tier || 'Sem tier'}`}
-                >
-                  <ModeIcon 
-                    mode={mode} 
-                    size={22} 
-                    className={cn(!hasTier && 'opacity-20 grayscale')}
-                  />
-                  <TierBadge 
-                    tier={hasTier ? tier.tier : undefined} 
-                    size="xs" 
-                    className="text-[9px] px-1 py-0 min-w-[26px] justify-center"
-                    showEmpty={!hasTier}
-                  />
-                </div>
-              )
-            })}
+            {GAME_MODES.filter(m => m !== 'Overall')
+              .sort((a, b) => {
+                const hasTierA = safeTiers.some(t => t.mode === a)
+                const hasTierB = safeTiers.some(t => t.mode === b)
+                if (hasTierA && !hasTierB) return -1
+                if (!hasTierA && hasTierB) return 1
+                return 0
+              })
+              .slice(0, 5)
+              .map((mode) => {
+                const tier = safeTiers.find((t) => t.mode === mode)
+                const hasTier = !!tier
+                
+                return (
+                  <div 
+                    key={mode} 
+                    className={cn(
+                      'flex flex-col items-center gap-0.5 p-1.5 rounded-lg transition-all duration-200',
+                      hasTier 
+                        ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b]' 
+                        : 'bg-[#1a1d22]/40'
+                    )}
+                    title={`${mode}: ${tier?.tier || 'Sem tier'}`}
+                  >
+                    <ModeIcon 
+                      mode={mode} 
+                      size={22} 
+                      className={cn(!hasTier && 'opacity-20 grayscale')}
+                    />
+                    <TierBadge 
+                      tier={hasTier ? tier.tier : undefined} 
+                      size="xs" 
+                      className="text-[9px] px-1 py-0 min-w-[26px] justify-center"
+                      showEmpty={!hasTier}
+                    />
+                  </div>
+                )
+              })}
           </div>
 
           {/* Admin delete */}
@@ -332,36 +350,44 @@ export function PlayerCard({ player, rank, selectedMode }: PlayerCardProps) {
             )}
           </div>
           
-          {/* Bottom row: Mode icons grid */}
+          {/* Bottom row: Mode icons grid - ordenados por quem tem tier primeiro */}
           <div className="flex items-center gap-1 overflow-x-auto pb-1 -mx-1 px-1">
-            {GAME_MODES.filter(m => m !== 'Overall').map((mode) => {
-              const tier = safeTiers.find((t) => t.mode === mode)
-              const hasTier = !!tier
-              
-              return (
-                <div 
-                  key={mode} 
-                  className={cn(
-                    'flex flex-col items-center gap-0.5 p-1.5 rounded-lg flex-shrink-0',
-                    hasTier 
-                      ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b]' 
-                      : 'bg-[#1a1d22]/40'
-                  )}
-                >
-                  <ModeIcon 
-                    mode={mode} 
-                    size={20} 
-                    className={cn(!hasTier && 'opacity-20 grayscale')}
-                  />
-                  <TierBadge 
-                    tier={hasTier ? tier.tier : undefined} 
-                    size="xs" 
-                    className="text-[8px] px-1 py-0 min-w-[24px] justify-center"
-                    showEmpty={!hasTier}
-                  />
-                </div>
-              )
-            })}
+            {GAME_MODES.filter(m => m !== 'Overall')
+              .sort((a, b) => {
+                const hasTierA = safeTiers.some(t => t.mode === a)
+                const hasTierB = safeTiers.some(t => t.mode === b)
+                if (hasTierA && !hasTierB) return -1
+                if (!hasTierA && hasTierB) return 1
+                return 0
+              })
+              .map((mode) => {
+                const tier = safeTiers.find((t) => t.mode === mode)
+                const hasTier = !!tier
+                
+                return (
+                  <div 
+                    key={mode} 
+                    className={cn(
+                      'flex flex-col items-center gap-0.5 p-1.5 rounded-lg flex-shrink-0',
+                      hasTier 
+                        ? 'bg-gradient-to-b from-[#2a2d35] to-[#22252b]' 
+                        : 'bg-[#1a1d22]/40'
+                    )}
+                  >
+                    <ModeIcon 
+                      mode={mode} 
+                      size={20} 
+                      className={cn(!hasTier && 'opacity-20 grayscale')}
+                    />
+                    <TierBadge 
+                      tier={hasTier ? tier.tier : undefined} 
+                      size="xs" 
+                      className="text-[8px] px-1 py-0 min-w-[24px] justify-center"
+                      showEmpty={!hasTier}
+                    />
+                  </div>
+                )
+              })}
           </div>
         </div>
       </div>
