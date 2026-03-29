@@ -23,13 +23,16 @@ export function RankingTable({
   const { players } = usePlayersStore()
 
   const filteredAndSortedPlayers = useMemo(() => {
-    return players
+    const result = players
       .map((player) => {
-        const modeTier = player.tiers?.find(
-          (t) => t.mode === selectedMode
-        )
+        const safeTiers = Array.isArray(player.tiers) ? player.tiers : []
+        const modeTier = safeTiers.find((t) => t.mode === selectedMode)
+        // Calcula pontos totais de todos os modos
+        const totalPoints = safeTiers.reduce((acc, t) => acc + (Number(t?.points) || 0), 0)
+        // Pontos do modo selecionado
+        const modePoints = Number(modeTier?.points) || 0
 
-        return { player, modeTier }
+        return { player, modeTier, totalPoints, modePoints }
       })
       .filter(({ player, modeTier }) => {
         if (!modeTier) return false
@@ -54,13 +57,17 @@ export function RankingTable({
         return true
       })
       .sort((a, b) => {
-        // Ordena por pontos (maior primeiro)
-        const pointsA = Number(a.modeTier?.points) || 0
-        const pointsB = Number(b.modeTier?.points) || 0
-        console.log('[v0] Sorting:', a.player.nick, pointsA, 'vs', b.player.nick, pointsB)
-        return pointsB - pointsA
+        // Ordena por pontos do modo selecionado (maior primeiro)
+        return b.modePoints - a.modePoints
       })
       .map(({ player }) => player)
+    
+    console.log('[v0] Ranking final:', result.map((p, i) => {
+      const t = p.tiers?.find(t => t.mode === selectedMode)
+      return `${i+1}. ${p.nick}: ${t?.points} pts (${t?.tier})`
+    }))
+    
+    return result
   }, [players, selectedMode, search, region, tier])
 
   if (filteredAndSortedPlayers.length === 0) {

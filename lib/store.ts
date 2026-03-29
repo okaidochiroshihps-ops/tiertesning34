@@ -57,7 +57,7 @@ export const usePlayersStore = create<PlayersState>((set) => ({
       const players = snapshot.docs.map((doc) => {
         const data: any = doc.data()
 
-        return {
+        const player = {
           id: doc.id,
           nick: data.nick || 'Sem nome',
           region: data.region || 'BR',
@@ -82,6 +82,10 @@ export const usePlayersStore = create<PlayersState>((set) => ({
                 },
               ],
         }
+        
+        console.log('[v0] Player loaded:', player.nick, 'tiers:', player.tiers.map(t => `${t.mode}: ${t.points}pts (${t.tier})`))
+        
+        return player
       })
 
       set({ players })
