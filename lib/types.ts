@@ -42,21 +42,21 @@ export type TierType =
   | 'MT5'
 
 export const TIERS: TierType[] = [
+  'LT1',
   'HT1',
+  'LT2',
   'HT2',
+  'LT3',
   'HT3',
+  'LT4',
   'HT4',
+  'LT5',
   'HT5',
   'MT1',
   'MT2',
   'MT3',
   'MT4',
   'MT5',
-  'LT1',
-  'LT2',
-  'LT3',
-  'LT4',
-  'LT5',
 ]
 
 export interface TierInfo {

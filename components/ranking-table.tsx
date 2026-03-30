@@ -8,11 +8,15 @@ import type { GameMode, Region, TierType } from '@/lib/types'
 import { Users, Trophy, Medal, Award } from 'lucide-react'
 
 // Ordem dos tiers para desempate (menor numero = tier mais forte)
-// HT1 e o mais forte (1), LT5 e o mais fraco (15)
-// Ordem de forca: LT5 < LT4 < LT3 < LT2 < LT1 < HT5 < HT4 < HT3 < HT2 < HT1
+// O numero do tier e o fator mais importante (Tier 1 > Tier 2 > Tier 3...)
+// LT e HT so servem como desempate quando o numero e igual (LT > HT)
+// Ordem de forca: LT1 > HT1 > LT2 > HT2 > LT3 > HT3 > LT4 > HT4 > LT5 > HT5
 const TIER_RANK: Record<TierType, number> = {
-  'HT1': 1, 'HT2': 2, 'HT3': 3, 'HT4': 4, 'HT5': 5,
-  'LT1': 6, 'LT2': 7, 'LT3': 8, 'LT4': 9, 'LT5': 10,
+  'LT1': 1, 'HT1': 2,
+  'LT2': 3, 'HT2': 4,
+  'LT3': 5, 'HT3': 6,
+  'LT4': 7, 'HT4': 8,
+  'LT5': 9, 'HT5': 10,
   'MT1': 11, 'MT2': 12, 'MT3': 13, 'MT4': 14, 'MT5': 15,
 }
 
